@@ -1,5 +1,5 @@
 import fs from "fs";
-import productController from "./productsController";
+import productController from "./productsController.js";
 
 export default class cartController {
   constructor(file) {
@@ -13,22 +13,32 @@ export default class cartController {
       products: [],
     };
 
-    const carritos = await this.getCarritos();
+    const carts = await this.getCarritos();
 
-    carritos.push(carrito);
+    carts.push(carrito);
 
     try {
-      await fs.promises.writeFile(
-        this.file,
-        JSON.stringify(carritos, null, "\t")
-      );
+      await fs.promises.writeFile(this.file, JSON.stringify(carts, null, "\t"));
       return "El carrito se ha creado correctamente";
     } catch (error) {
       console.error(error);
-      return [];
+      //return [];
     }
   }
 
+  async getCarritoById(id) {
+    try {
+      const carritos = await this.getCarritos();
+      const carrito = carritos.find((carrito) => carrito.id === parseInt(id));
+      if (!carrito) {
+        return { error: "Carrito no encontrado" };
+      }
+      return carrito;
+    } catch (error) {
+      console.error(error.message);
+      return { error: "Error al obtener el carrito" };
+    }
+  }
   async addProduct(productId, id) {
     try {
       let busquedaCarritos = await fs.promises.readFile(this.file, "utf-8");
@@ -48,10 +58,7 @@ export default class cartController {
 
       carritoencontrado.products.push(productoEncontrado);
 
-      await fs.promises.writeFile(
-        this.file,
-        JSON.stringify(carritos, null, "\t")
-      );
+      await fs.promises.writeFile(this.file, JSON.stringify(array, null, "\t"));
 
       return "Producto añadido exitosamen3";
     } catch (error) {
@@ -60,22 +67,20 @@ export default class cartController {
     }
   }
 
+  async getCarritos() {
+    try {
+      const carts = await fs.promises.readFile(this.file, "utf8");
+      return JSON.parse(carts);
+    } catch (error) {
+      console.error(error);
+      return [];
+    }
+  }
   async getId() {
-    const carritos = await this.getCarrito();
-    if (carritos.length > 0) {
-      return parseInt(carritos[carritos.length - 1].id + 1);
+    const carts = await this.getCarritos();
+    if (carts.length > 0) {
+      return parseInt(carts[carts.length - 1].id + 1);
     }
     return 1;
   }
-
-  async getCarrito() {
-    try {
-      const carritos = await fs.promises.readFile(this.carritos, "utf8");
-      return JSON.parse(carritos);
-    } catch (error) {
-      return "No se pudo obtener los productos del carrito";
-    }
-  }
-};
-
-
+}
