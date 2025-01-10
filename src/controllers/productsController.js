@@ -6,12 +6,6 @@ export default class productController {
     this.productos = [];
   }
 
-  ensureFileExists() {
-    if (!fs.existsSync(this.file)) {
-      fs.writeFileSync(this.file, "[]", "utf8");
-      console.log(`Archivo ${this.file} creado correctamente.`);
-    }
-  }
 
 
 

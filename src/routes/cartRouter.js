@@ -5,6 +5,8 @@ import { fileURLToPath } from "url";
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
 const router = Router();
+
+
 const cartCtrl = new cartController(`${__dirname}/Carritos.json`);
 
 router.get("/:cid", async (req, res) => {

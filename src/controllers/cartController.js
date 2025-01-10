@@ -1,5 +1,11 @@
 import fs from "fs";
 import productController from "./productsController.js";
+import { dirname, join } from "path";
+import { fileURLToPath } from "url";
+import { error } from "console";
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = dirname(__filename);
+const rutaProducts = join(__dirname, "../routes/", "Productos.json");
 
 export default class cartController {
   constructor(file) {
@@ -9,7 +15,7 @@ export default class cartController {
 
   async createCart() {
     const carrito = {
-      id: await getId(),
+      id: await this.getId(),
       products: [],
     };
 
@@ -43,20 +49,28 @@ export default class cartController {
     try {
       let busquedaCarritos = await fs.promises.readFile(this.file, "utf-8");
       let array = await JSON.parse(busquedaCarritos);
-      let carritoencontrado = array.find((carrito) => carrito.id === id);
+      let carritoencontrado = array.find((carrito) => carrito.id == id);
 
-      let buscarProducto = await fs.promises.readFile(
-        "/productos.json",
-        "utf-8"
-      );
+      let buscarProducto = await fs.promises.readFile(rutaProducts, "utf-8");
 
       let arrayProductos = await JSON.parse(buscarProducto);
-
+      console.log(arrayProductos);
       let productoEncontrado = arrayProductos.find(
-        (producto) => producto.id === productId
+        (producto) => producto.id == productId
       );
 
-      carritoencontrado.products.push(productoEncontrado);
+      if (!productoEncontrado) throw new Error("No se encontro el producto");
+      console.log(productoEncontrado);
+
+      let productoEnCarrito = carritoencontrado.products.find(
+        (producto) => producto.id == productId
+      );
+
+      if (productoEnCarrito) {
+        productoEnCarrito.quantity += 1;
+      } else {
+        carritoencontrado.products.push({ id: productId, quantity: 1 });
+      }
 
       await fs.promises.writeFile(this.file, JSON.stringify(array, null, "\t"));
 

@@ -8,5 +8,25 @@
 		"stock": "35",
 		"category": "categoria 2",
 		"Status": true
+	},
+	{
+		"id": 3,
+		"title": "Producto1",
+		"description": "producto1",
+		"code": "125",
+		"price": "50",
+		"stock": "20",
+		"category": "1",
+		"Status": true
+	},
+	{
+		"id": 4,
+		"title": "producto3",
+		"description": "producto3",
+		"code": "2",
+		"price": "24",
+		"stock": "3",
+		"category": "2",
+		"Status": true
 	}
 ]
